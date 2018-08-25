@@ -1,0 +1,22 @@
+<html>
+<% var g_str="";
+for(var i=0; i < g_c[1].length; i++) {
+
+     g_str+=g_c[1][i].g_str
+
+ }
+
+%>
+<textarea style="display: none;" id="g_str"><%=g_str%></textarea>
+<script>
+
+    function global_load() {
+        var str=document.getElementById("g_str").innerHTML;
+        //alert(str);
+        eval(str);
+
+    }
+
+global_load();
+</script>
+</html>
