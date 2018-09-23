@@ -1,4 +1,4 @@
-<html>
+b<html>
 <head>
 <title id="title"></title>
 
@@ -25,7 +25,7 @@
       <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 
 </head>
-<body>
+<body ng-app="susApp"  ng-controller="loanCycleCtr">
     <h1 class="title-agile text-center" id="logo_heading"></h1>
     <div class="content-w3ls">
         <div class="content-top-agile">
@@ -47,9 +47,9 @@
                 </div>
                 <div class="field-group">
                     <span class="fa fa-home" aria-hidden="true"></span>
-                    <div class="wthree-field">
-                        <select required>
-                            <option value="3" class="form-control">Hotel ABC</option>
+                    <div class="wthree-field" ng-init="getHotelsList()">
+                        <select required id="hlist" name="h_id">
+                            <option  class="form-control" selected value="-1">--Select One--</option>
                         </select>
                     </div>
                 </div>
@@ -83,4 +83,37 @@
   <% include ../include/globalization.ejs
     %><!-------Globalization must be included at the end of Page---->
 
+<!-- jQuery 3 -->
+
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script >
+
+
+function langData() {
+
+    $.ajax({
+            type: "GET",
+            url: "/getHotelsList",
+            contentType: 'application/json',
+            success: function (result) {
+                //alert('d');
+               // $('#hlist').empty();
+                //alert(result["data"]);
+                for (var i = 0; i < result.data[0].length; i++) {
+
+                    $('#hlist').append('<option value="'+result["data"][0][i].location_id+'">'+result["data"][0][i].hotel_name+'</option>');
+
+                }
+                hideLoad();
+
+
+
+
+            }
+        }
+    );
+
+}
+langData();
+</script>
           </html>

@@ -3,7 +3,8 @@
     module.exports.authenticate=function(req,res){
         var email=req.body.email;
         var password=req.body.pass;
-        connection.query("SELECT * FROM USERS u inner join L_ROLE lr ON u.role=lr.role_id WHERE u.email ='"+email+"';", function (error, results, fields) {
+        var h_id=req.body.h_id;
+        connection.query("SELECT * FROM USERS u LEFT join L_ROLE lr ON u.role=lr.role_id LEFT JOIN C_HOTEL_ACCESS a ON a.user_id=u.id WHERE u.email ='"+email+"' AND a.hotel_id="+h_id+" AND a.isActive=1;", function (error, results, fields) {
           if (error) {
               res.json({
                 status:error,

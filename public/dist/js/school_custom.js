@@ -17,17 +17,46 @@ app.controller('loanCycleCtr', function ($scope, $http) {
 
 
     $scope.search = function (id) {
+
         id = $('#acc').val();
         if ($('#acc').val() == '') {
-            alert("Please fill the Account Number!!!");
+            alert("Please fill the Valid Mobile Number and Booking ID!!!");
             return;
         }
-        getRoomCategory(3)
         showLoad();
-        $http.get("/getPersonByID/" + id).then(function (response) {
-            $scope.pData = response.data;
+        $http.get("/getSearchBymob_bid/" + id).then(function (response) {
+            $scope.searchData = response.data;
             hideLoad();
 
+        }, function (response) {
+            //Second function handles error
+            alert('Something went wrong');
+            $scope.content = "Something went wrong";
+        });
+    }
+
+    $scope.getHotelsList = function () {
+
+        $http.get("/getHotelsList/").then(function (response) {
+            $scope.hData = response.data;
+
+            alert("");
+            hideLoad();
+            $scope.hData=hData;
+        }, function (response) {
+            //Second function handles error
+            alert('Something went wrong');
+            $scope.content = "Something went wrong";
+        });
+    }
+    $scope.getTodayActivity = function () {
+showLoad();
+        $http.get("/getTodayActivity/").then(function (response) {
+            $scope.TaData = response.data;
+
+            //alert("");
+            hideLoad();
+            $scope.TaData=TaData;
         }, function (response) {
             //Second function handles error
             alert('Something went wrong');
@@ -101,6 +130,21 @@ app.controller('loanCycleCtr', function ($scope, $http) {
             $scope.content = "Something went wrong";
         });
     }
+    $scope.getIsolateReport = function () {
+
+        showLoad();
+        $http.get("/getIsolateReport/").then(function (response) {
+            $scope.rData = response.data;
+            hideLoad();
+//alert(JSON.stringify(response.data.data[0]));
+
+        }, function (response) {
+            //Second function handles error
+            hideLoad();
+            alert('Something went wrong');
+            $scope.content = "Something went wrong";
+        });
+    }
     var category = -1;
     $scope.getRoomsByCategoryID = function (q) {
         // var q=4;
@@ -114,6 +158,7 @@ app.controller('loanCycleCtr', function ($scope, $http) {
             $scope.tData = response.data;
 
             hideLoad();
+            $scope.getToltipForRooms();
 
         }, function (response) {
             //Second function handles error
@@ -253,7 +298,7 @@ app.controller('loanCycleCtr', function ($scope, $http) {
                         edate_edit.datepicker('remove');
                     }
 
-
+t=1;
                     sdate_edit = $('.start_date_edit').datepicker({
 
                         "format": 'yyyy-mm-dd',
@@ -290,14 +335,15 @@ app.controller('loanCycleCtr', function ($scope, $http) {
                 }
             }
 
-            if (t == -1) {
+            if (t == 0) {
+
                 if (sdate_edit != null) {
 
                     sdate_edit.datepicker('remove');
                     edate_edit.datepicker('remove');
                 }
 
-                sdate_edit = $('#start_date_edit').datepicker({
+                sdate_edit = $('.start_date_edit').datepicker({
 
                     "format": 'yyyy-mm-dd',
                     "startDate": today,
@@ -311,7 +357,7 @@ app.controller('loanCycleCtr', function ($scope, $http) {
                 }).on('changeDate', function () {
                     $(this).datepicker('hide');
                 });//.datepicker("setDate", today);
-                edate_edit = $('#end_date_edit').datepicker({
+                edate_edit = $('.end_date_edit').datepicker({
 
                     "format": 'yyyy-mm-dd',
                     "startDate": today,
@@ -338,12 +384,59 @@ app.controller('loanCycleCtr', function ($scope, $http) {
             $scope.content = "Something went wrong";
         });
     }
-    $scope.getLastTenBookingTransactions = function () {
-        //alert(id);
+    $scope.getLastTenBookingTransactions = function (h_id) {
+      //  alert(h_id);
 
-        $http.get("/getLastTenBookingTransactions/").then(function (response) {
+        $http.get("/getLastTenBookingTransactions/"+h_id).then(function (response) {
             $scope.room10Data = response.data;
             //alert(JSON.stringify(response.data.data));
+
+        }, function (response) {
+            //Second function handles error
+            alert('Something went wrong');
+            $scope.content = "Something went wrong";
+        });
+
+    }
+
+    $scope.getStatupMethodLoader = function () {
+        //alert(id);
+
+        $http.get("/getStatupMethodLoader/").then(function (response) {
+       //     $scope.slData = response.data;
+           // alert(JSON.stringify(response.data.data[0][0].method));
+            $scope.$eval(response.data.data[0][0].method);
+
+        }, function (response) {
+            //Second function handles error
+            alert('Something went wrong');
+            $scope.content = "Something went wrong";
+        });
+
+    }
+    $scope.getToltipForRooms = function () {
+        //alert(id);
+
+        $http.get("/getToltipForRooms/").then(function (response) {
+       //     $scope.slData = response.data;
+           // alert(JSON.stringify(response.data.data[0]));
+            //$scope.$eval(response.data.data[0][0].method);
+            for (var i=0;i<response.data.data[0].length;i++)
+            {
+
+                //alert(response.data.data[0][i].room_id);
+                $('#tol'+response.data.data[0][i].room_id).append('<table class="table table-bordered tab-danger">\n' +
+                    '                                <thead style="color:white"><th>Room Name</th>\n' +
+                    '                                <th>Start Date</th>\n' +
+                    '                                <th>End Date</th>\n' +
+                    '                                <th>Status</th></thead></table>');
+
+                $('#tol'+response.data.data[0][i].room_id).append('<table class="table"><tr><td style=\'color:white;\'><h3>'+response.data.data[0][i].room_name+'</h3></td>' +
+                    '<td style=\'color:white;\'><h3>'+response.data.data[0][i].book_start_date.substring(0,10)+'</h3></td>' +
+                    '<td style=\'color:white;\'><h3>'+response.data.data[0][i].book_end_date.substring(0,10)+'</h3></td>' +
+                    '<td style=\'color:white;\'><h3>'+response.data.data[0][i].description+'</h3></td></tr></table>');//, html: true});//.attr('title','<h3>'+response.data.data[0][i].customer_name+' | '+response.data.data[0][i].room_name+'</h3>');
+            }
+
 
         }, function (response) {
             //Second function handles error
@@ -448,13 +541,14 @@ app.controller('loanCycleCtr', function ($scope, $http) {
     var chart_1;
     var chart_2;
     var chart_3;
-    $scope.getReports = function (id) {
+    $scope.getReports = function (id,h_id) {
         //alert(id);
-
-        $http.get("/getReports/" + id).then(function (response) {
+        showLoad();
+$('#f').html("  "+$('#rpt_datepickerFrom').val()+' To '+$('#rpt_datepickerTo').val());
+        $http.get("/getReports/" + id+"&"+$('#rpt_datepickerFrom').val()+"&"+$('#rpt_datepickerTo').val()+"&"+h_id).then(function (response) {
             var tdData = response.data;
             $scope.tdData = tdData;
-            alert(JSON.stringify(response.data.data[2]));
+            //alert(JSON.stringify(response.data.data));
 
             $('#line-chart').empty();
             chart_1 = new Morris.Line({
@@ -531,7 +625,7 @@ $('#line-chart_1').empty();
                 behaveLikeLine: true
             });
 
-
+hideLoad();
         }, function (response) {
             //Second function handles error
             alert('Something went wrong');
@@ -591,7 +685,7 @@ $('#line-chart_1').empty();
     ////Intail Calls////
     $scope.getTabs();
     //$scope.getStats();
-
+$scope.getStatupMethodLoader();
     ///Intail Calls End
 
     //Print
@@ -708,11 +802,15 @@ $('#room_booking_form').on('submit', function (e) {
             //$('#track_upload_panel').fadeIn(1000);
             angular.element(document.getElementById('room_booking_form')).scope().getRoomsByCategoryID(-1);
 
+             angular.element(document.getElementById('room_booking_form')).scope().getLastTenBookingTransactions(angular.element(document.getElementById('room_booking_form')).scope().h_id);
+
+
+
             hideLoad();
             $('#roomFormModal').modal('hide');
 
-            angular.element(document.getElementById('room_booking_form')).scope().getRoomCategory(3);
-            getRoomCategory(3);
+            angular.element(document.getElementById('room_booking_form')).scope().getRoomCategory(angular.element(document.getElementById('room_booking_form')).scope().h_id);
+           // getRoomCategory(3);
             document.getElementById('room_booking_form').reset();
 
         }
@@ -773,12 +871,12 @@ $('#room_booking_edit_form').on('submit', function (e) {
             // alert(data);
             //$('#track_upload_panel').fadeIn(1000);
             angular.element(document.getElementById('room_booking_form')).scope().getRoomsByCategoryID(-1);
-            angular.element(document.getElementById('room_booking_form')).scope().getLastTenBookingTransactions();
+            angular.element(document.getElementById('room_booking_form')).scope().getLastTenBookingTransactions(angular.element(document.getElementById('room_booking_form')).scope().h_id);
             hideLoad();
             $('#roomEditFormModal').modal('hide');
 
             angular.element(document.getElementById('room_booking_form')).scope().getRoomCategory(3);
-            getRoomCategory(3);
+            //getRoomCategory(3);
             document.getElementById('room_booking_form').reset();
 
 
@@ -871,6 +969,8 @@ var date = new Date();
 var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 var tomorrow = new Date(date.getFullYear(), date.getMonth(), (date.getDate() + 1));
 
+var nextMonth = new Date(date.getFullYear(), date.getMonth()+1, (date.getDate()));
+
 
 $('#datetimepickerFrom').datepicker({
 
@@ -879,6 +979,19 @@ $('#datetimepickerFrom').datepicker({
 
 
 $('#datetimepickerTo').datepicker("setDate", tomorrow);
+
+$('#rpt_datepickerFrom').datepicker({
+
+    "format": 'yyyy-mm-dd'
+}).datepicker("setDate", today);
+
+
+
+$('#rpt_datepickerTo').datepicker({
+
+    "format": 'yyyy-mm-dd'
+}).datepicker("setDate", nextMonth);
+
 
 ///////////////////////////////////////////////
 
@@ -903,7 +1016,6 @@ $(document).ready(function () {
 ///////////////////////////Datatable/////////
 
 //Timer to logout
-
 $(document).ready(function () {
     $(document).click(function () {
 
@@ -920,6 +1032,30 @@ $(document).ready(function () {
     });
 
 });
+
+function genPDF() {
+
+    alert('We are working. Just wait for a moment.')
+
+html2canvas(document.body).then(function(canvas) {
+    var ctx = canvas.getContext('2d');
+        ctx.webkitImageSmoothingEnabled = false;
+        ctx.mozImageSmoothingEnabled = false;
+        ctx.imageSmoothingEnabled = false;
+   var img=canvas.toDataURL("image/png");
+
+      var doc = new jsPDF("p", "mm", "a4");
+        var width = doc.internal.pageSize.width;
+var height = doc.internal.pageSize.height;
+        doc.addImage(img,'JPEG', 0, 0, width, height);
+        doc.save('test.pdf');
+});
+
+
+
+
+
+}
 
 //////////////////multiple select///////////////20
 

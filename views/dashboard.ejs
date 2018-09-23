@@ -39,15 +39,15 @@
                                  <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
                              </ul>
                          </li>-->
-                        <li class="pull-right"><a href="#" class="text-muted"><i class="fa fa-gear"></i></a></li>
+                        <li class="pull-right"><a href="javascript:genPDF()" class="text-muted"><i class="fa fa-camera"></i></a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
                             <div>
                                 <!-- Horizontal Form -->
-                                <div class="box box-info " ng-init="getRoomCategory(3)">
+                                <div class="box box-info " ng-init="getRoomCategory(h_id)">
                                     <div class="box-header with-border">
-                                        <h3 class="box-title">Rooms</h3>
+                                        <h3 class="box-title">Rooms Category </h3>
 
                                     </div>
                                     <div class="col-lg-12  box-body  ">
@@ -88,13 +88,13 @@
 
 
                                 </div>
-                                <div class="box box-info " ng-init="getRoomCategory(3)">
+                                <div class="box box-info " ng-init="getRoomCategory(h_id)">
                                     <div class="box-header with-border">
                                         <h3 class="box-title">Last 10 Booking Transactions</h3>
 
                                     </div>
-                                    <div class="col-lg-12 box box-body  " ng-init="getLastTenBookingTransactions()">
-                                        <div class="">
+                                    <div class="col-lg-12 box box-body  " ng-init="getLastTenBookingTransactions(h_id)">
+                                        <div class="table-responsive    ">
                                             <div class="card-body" ng-if="room10Data.data[0].length<=0">
                                                 <br/><br/>
                                                 <span class="badge alert">There is no booking.</span>
@@ -164,104 +164,68 @@
                         <div class="tab-pane" id="tab_2">
                             <div class="box box-info ">
                                 <div class="box-header with-border">
-                                    <h3 class="box-title">Student Form</h3>
+                                    <h3 class="box-title">Today Activity</h3>
                                 </div>
-                                <!-- /.box-header -->
-                                <!-- form start -->
-                                <form class="form-horizontal" data-ng-init="getForms(2)" id="student_form"
-                                      action="{{frData[2].data[0][0].action+'/'+frData[2].data[0][0].form_id+'&'+frData[2].data[0][0].form_table_name}}"
-                                      method="post">
-                                    <div class="box-body ">
+                                <div class="box-body box-solid bg-gray-light">
+                                    <div class="col-md-12">
+          <!-- The time line -->
+                                         <h3 ng-if="TaData.data[0].length<=0">There is no activity to show.</h3>
+          <ul class="timeline" ng-repeat="ta in TaData.data[0]">
+            <!-- timeline time label -->
+            <li class="time-label">
+                  <span class="bg-red">
+                    {{ta.ta_time}}
+                  </span>
+            </li>
+            <!-- /.timeline-label -->
+            <!-- timeline item -->
+            <li>
+              <i class="fa fa-star bg-blue"></i>
 
+              <div class="timeline-item">
+                <span class="time"><i class="fa fa-clock-o"></i> {{ta.ta_time}}</span>
 
-                                        <div class="form-horizontal ">
-                                            <div class="panel panel-success">
+                  <h3 class="timeline-header">Room <a href="#">{{ta.room_name}}</a> {{ta.description}} By <b>{{ta.name}}</b></h3>
 
+                <div class="timeline-body" >
 
-                                                <div class="panel-body">
-                                                    <!--  <center>
+                    <p>Room <b>{{ta.room_name}}</b> has been Booked against <b class="badge">{{ta.booking_id}}</b> booking id with mobile number <mark>{{ta.customer_mob}}</mark> by <b> {{ta.customer_name}}</b>.</p>
+                    <p ng-if="(ta.bd | date:'yyyy/MM/dd')!=(ta.o_bd | date:'yyyy/MM/dd')&&ta.description!='is Booked'"><b>Booking Start Date </b> has been changed from <mark><b>{{ta.o_bd | date:'yyyy-MMM-dd'}}</b></mark> to <mark><b>{{ta.bd | date:'yyyy-MMM-dd'}}</b></mark>. </p>
+                    <p ng-if="(ta.ed | date:'yyyy/MM/dd')!=(ta.o_ed | date:'yyyy/MM/dd') && ta.description!='is Booked'"><b>Booking End Date</b> has been changed from <mark><b>{{ta.o_ed | date:'yyyy-MMM-dd'}}</b></mark> to <mark><b>{{ta.ed | date:'yyyy-MMM-dd'}}</b></mark>. </p>
+                    <p ng-if="ta.description=='is Booked'">Room  has been booked from <mark ><b>{{ta.bd | date:'yyyy-MMM-dd'}}</b></mark> to <mark><b>{{ta.ed | date:'yyyy-MMM-dd'}}</b></mark>. </p>
+                    <p ng-if="ta.description=='is Booked'">Submitted Amount <i class="fa fa-rupee"></i> {{ta.room_cost}}. </p>
+                   <p ng-if="ta.booking_status_id!=ta.old_booking_status_id">Room Staus has been changed from <b class="badge">{{ta.o_bs}}</b> To <b class="badge">{{ta.n_bs}}.</b>
 
-                                                          <div class="col-lg-3 col-lg-offset-2">
-                                                              <img src="{{pData.data[0].photo_url}}"
-                                                                   class="img-thumbnail img-responsive">
-                                                          </div>
-                                                      </center>-->
-                                                    <div class="form-group col-lg-4" ng-repeat="f in frData[2].data[1]">
-                                                        <label for="inputEmail3"
-                                                               ng-if="f.isHidden==0 || f.caption_name!=''"
-                                                               class="col-sm-2 control-label">{{f.caption_name}}</label>
+                </div>
+                <div class="timeline-footer">
+                  <a class="btn btn-primary btn-xs">Read more</a>
+                  <a class="btn btn-danger btn-xs">Delete</a>
+                </div>
+              </div>
+            </li>
 
-                                                        <div class="col-sm-10">
+            <!-- END timeline item -->
+            <!-- timeline item -->
 
-                                                            <input ng-if="f.type_name!='textarea' && f.type_name!='select' && f.type_name!='button' && f.type_name!='submit' && f.type_name!='reset'"
-                                                                   ng-hide="f.isHidden"
-                                                                   type="{{f.type_name}}"
-                                                                   maxlength="{{f.field_max_length}}"
-                                                                   minlength="{{f.field_max_length}}"
-                                                                   ng-required="{{f.required_id}}"
-                                                                   ng-readonly="{{f.field_readonly}}"
-                                                                   ng-class="f.field_class"
-                                                                   class="form-control col-lg-2" name="{{f.field_name}}"
-                                                                   id="{{f.field_id}}" ng-value="{{f.field_value}}"
-                                                                   placeholder="{{f.field_placeholder}}">
-                                                            <textarea ng-if="f.type_name=='textarea'"
-                                                                      ng-hide="f.isHidden"
-                                                                      maxlength="{{f.field_max_length}}"
-                                                                      minlength="{{f.field_max_length}}"
-                                                                      ng-required="{{f.required_id}}"
-                                                                      ng-readonly="{{f.field_readonly}}"
-                                                                      class="form-control col-lg-2"
-                                                                      name="{{f.field_name}}"
-                                                                      id="{{f.field_id}}" ng-value="{{f.field_value}}"
-                                                                      placeholder="{{f.field_placeholder}}"></textarea>
-                                                            <select ng-if="f.type_name=='select'"
-                                                                    ng-hide="f.isHidden"
-                                                                    data-ng-init="getL_fieldByname(f.l_field_name)"
+            <!-- END timeline item -->
+            <!-- timeline item -->
 
+            <!-- END timeline item -->
+            <!-- timeline time label -->
 
-                                                                    ng-required="{{f.required_id}}"
-                                                                    ng-readonly="{{f.field_readonly}}"
-                                                                    class="form-control col-lg-2"
-                                                                    name="{{f.field_name}}"
+            <!-- /.timeline-label -->
+            <!-- timeline item -->
 
-                                                                    id="{{f.field_id}}"
-                                                            >
-                                                                <option ng-repeat="fo in froData.data[0]"
-                                                                        ng-value="{{fo.fid}}">{{fo.description}}
-                                                                </option>
-                                                            </select>
+            <!-- END timeline item -->
+            <!-- timeline item -->
 
-                                                            <div ng-if="f.type_name=='button' || f.type_name=='reset' || f.type_name=='submit'">
-                                                                <div class="col-lg-12"><br/></div>
-                                                                <button type="{{f.type_name}}"
-                                                                        maxlength="{{f.field_max_length}}"
-                                                                        minlength="{{f.field_max_length}}"
-                                                                        ng-required="{{f.required_id}}"
-                                                                        ng-readonly="{{f.field_readonly}}"
-                                                                        ng-class="f.field_class"
-                                                                        class="form-control col-lg-2"
-                                                                        name="{{f.field_name}}"
-                                                                        id="{{f.field_id}}" ng-value="f.field_value">
-                                                                    {{f.field_value}}
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            <!-- /.box-header -->
-                                            <!-- form start -->
-
-
-                                            <!-- /.box-body -->
-
-                                        </div>
-
-                                    </div>
-                                </form>
-                                <!-- /.box-footer -->
+            <!-- END timeline item -->
+            <li>
+              <i class="fa fa-clock-o "></i>
+            </li>
+          </ul>
+        </div>
+                                </div>
 
                             </div>
 
@@ -272,7 +236,120 @@
                                 <div class="box-header with-border">
                                     <h3 class="box-title">Reports</h3>
                                 </div>
-                                 <div class="box-body">
+                                <div class="box-body">
+                                    <div class="box box-solid " style="background-color: #bebebf;">
+                                        <div class="box-header">
+                                            <i class="fa fa-th"></i>
+
+                                            <h3 class="box-title">Today Recap Report</h3>
+
+                                            <div class="box-tools pull-right">
+                                                <button type="button" class="btn bg-red btn-sm" data-target="mg1"
+                                                        data-toggle="collapse">
+                                                    <i class="fa fa-minus"></i>
+                                                </button>
+                                                <button type="button" class="btn bg-red-gradient btn-sm"
+                                                        data-widget="remove"><i
+                                                            class="fa fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="box-body border-radius-none  " id="mg1">
+                                            <div class="col-md-6">
+                                                <div class="box">
+
+                                                    <!-- /.box-header -->
+                                                    <div class="box-body no-padding table-responsive">
+                                                        <table class="table table-striped">
+                                                            <tbody>
+                                                            <tr>
+                                                                <th style="width: 10px">#</th>
+                                                                <th>Category</th>
+                                                                <th>Booking</th>
+                                                                <th style="width: 40px">%</th>
+                                                            </tr>
+                                                            <tr ng-repeat="y in tdData.data[5]">
+                                                                <td>{{y.row_count}}</td>
+                                                                <td><b>{{y.c_name}}</b>({{y.r_count}}/{{y.r_tot}})</td>
+                                                                <td>
+                                                                    <div class="progress progress-xs">
+                                                                        <div class="progress-bar "
+                                                                             ng-class="whatClassIsIt((100*y.r_count)/y.r_tot)"
+                                                                             style="width: {{100*y.r_count/y.r_tot| number:2}}%"></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td><span class="badge "
+                                                                          ng-class="whatClassIsIt((100*y.r_count)/y.r_tot)">{{100*y.r_count/y.r_tot | number:2}}%</span>
+                                                                </td>
+                                                            </tr>
+
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <!-- /.box-body -->
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="box box-widget widget-user">
+                                                    <!-- Add the bg color to the header using any of the bg-* classes -->
+                                                    <div class="widget-user-header bg-aqua-active">
+                                                        <h3 class="widget-user-username">Today Sale Summary</h3>
+                                                        <h5 class="widget-user-desc"></h5>
+                                                    </div>
+
+                                                    <div class="box-footer">
+                                                        <div class="row" style="color: #0a0a0a;">
+                                                            <div class="col-sm-3 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">
+                                                                        {{tdData.data[6][0].b}}</h5>
+                                                                    <span class="description-text">Booked</span>
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+                                                            <!-- /.col -->
+                                                            <div class="col-sm-3 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">
+                                                                        {{tdData.data[6][0].t}}</h5>
+                                                                    <span class="description-text">Tenative</span>
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+                                                            <!-- /.col -->
+                                                            <div class="col-sm-3 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">
+                                                                        {{tdData.data[6][0].c}}</h5>
+                                                                    <span class="description-text">Cancelled</span>
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header"><i
+                                                                                class="fa fa-rupee"></i>
+                                                                        {{tdData.data[6][0].tot | currency:""}}</h5>
+                                                                    <span class="description-text">Today Sale</span>
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+                                                            <!-- /.col -->
+                                                        </div>
+                                                        <!-- /.row -->
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                        <!-- /.box-body -->
+
+                                        <!-- /.box-footer -->
+                                    </div>
+                                </div>
+                                <div class="box-body">
                                     <div class="box box-solid bg-aqua-gradient">
                                         <div class="box-header">
                                             <i class="fa fa-th"></i>
@@ -326,33 +403,32 @@
                                 <div class="box">
                                     <div class="box-header with-border">
                                         <h3 class="box-title">Monthly Recap Report</h3>
+                                        <div class=" pull-right">
 
-                                        <div class="box-tools pull-right">
-                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                                        class="fa fa-minus"></i>
-                                            </button>
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-box-tool dropdown-toggle"
-                                                        data-toggle="dropdown">
-                                                    <i class="fa fa-wrench"></i></button>
-                                                <ul class="dropdown-menu" role="menu">
-                                                    <li><a href="#">Action</a></li>
-                                                    <li><a href="#">Another action</a></li>
-                                                    <li><a href="#">Something else here</a></li>
-                                                    <li class="divider"></li>
-                                                    <li><a href="#">Separated link</a></li>
-                                                </ul>
-                                            </div>
-                                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i
-                                                        class="fa fa-times"></i></button>
+                                        <span class="form-inline">
+                                            <label class="badge label-success label">From:</label>
+                                            <input type="text" id="rpt_datepickerFrom" class="form-control">
+                                        </span>
+                                            <span class="form-inline">
+                                            <label class="badge label-success label">To:</label>
+                                            <input type="text" id="rpt_datepickerTo" class="form-control">
+                                        </span>
+
+                                            <span class="form-inline">
+                                            <button class="badge btn btn-warning" ng-click="getReports(2,h_id)"><i
+                                                        class=" fa fa-2x fa-search"></i><b>Search</b></button>
+
+                                        </span>
+
                                         </div>
+
                                     </div>
                                     <!-- /.box-header -->
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-md-8">
                                                 <p class="text-center">
-                                                    <strong>Sales: 1 Jan, 2014 - 30 Jul, 2014</strong>
+                                                    <strong>Sales:<span id="f"></span></strong>
                                                 </p>
 
                                                 <div class="chart">
@@ -364,10 +440,11 @@
                                             <!-- /.col -->
                                             <div class="col-md-4">
                                                 <p class="text-center">
-                                                    <strong>Goal Completion</strong>
+                                                    <strong>Average of Selected Time Range</strong>
                                                 </p>
 
-                                                <div class="progress-group" title="{{tr.d_avg}}/{{tr.tot_room}}" ng-repeat="tr in tdData.data[2]">
+                                                <div class="progress-group" title="{{tr.d_avg}}/{{tr.tot_room}}"
+                                                     ng-repeat="tr in tdData.data[2]">
                                                     <span class="progress-text">{{tr.c_name}}</span>
                                                     <span class="progress-number"><b>{{tr.d_avg}}</b>/{{tr.tot_room}}</span>
 
@@ -378,7 +455,6 @@
                                                     </div>
                                                 </div>
                                                 <!-- /.progress-group -->
-
 
 
                                             </div>
@@ -393,7 +469,8 @@
                                                 <div class="description-block border-right">
                                                     <span class="description-percentage text-green"><i
                                                                 class="fa fa-caret-up"></i> 17%</span>
-                                                    <h5 class="description-header"><i class="fa fa-rupee"></i> {{tdData.data[3][0].tot_r | currency:""}}</h5>
+                                                    <h5 class="description-header"><i class="fa fa-rupee"></i>
+                                                        {{tdData.data[7][0].tot | currency:""}}</h5>
                                                     <span class="description-text">TOTAL REVENUE</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -403,8 +480,8 @@
                                                 <div class="description-block border-right">
                                                     <span class="description-percentage text-yellow"><i
                                                                 class="fa fa-caret-left"></i> 0%</span>
-                                                    <h5 class="description-header">$10,390.90</h5>
-                                                    <span class="description-text">TOTAL COST</span>
+                                                    <h5 class="description-header">{{tdData.data[7][0].b}}</h5>
+                                                    <span class="description-text">TOTAL BOOKED</span>
                                                 </div>
                                                 <!-- /.description-block -->
                                             </div>
@@ -413,8 +490,8 @@
                                                 <div class="description-block border-right">
                                                     <span class="description-percentage text-green"><i
                                                                 class="fa fa-caret-up"></i> 20%</span>
-                                                    <h5 class="description-header">$24,813.53</h5>
-                                                    <span class="description-text">TOTAL PROFIT</span>
+                                                    <h5 class="description-header">{{tdData.data[7][0].t}}</h5>
+                                                    <span class="description-text">TOTAL TENTIVE</span>
                                                 </div>
                                                 <!-- /.description-block -->
                                             </div>
@@ -423,8 +500,8 @@
                                                 <div class="description-block">
                                                     <span class="description-percentage text-red"><i
                                                                 class="fa fa-caret-down"></i> 18%</span>
-                                                    <h5 class="description-header">1200</h5>
-                                                    <span class="description-text">GOAL COMPLETIONS</span>
+                                                    <h5 class="description-header">{{tdData.data[7][0].c}}</h5>
+                                                    <span class="description-text">GOAL CANCELLED</span>
                                                 </div>
                                                 <!-- /.description-block -->
                                             </div>
@@ -440,115 +517,55 @@
                         <div class="tab-pane " id="tab_4">
                             <div class="box box-info ">
                                 <div class="box-header with-border">
-                                    <h3 class="box-title"><b>Messages</b></h3>
+                                    <h3 class="box-title"><b>Search</b></h3>
                                 </div>
 
                                 <div class=" box-body">
-                                    <form class="form-horizontal" data-ng-init="getForms(5)" id="student_message_form"
-                                          action="{{frData[5].data[0][0].action+'/'+frData[5].data[0][0].form_id+'&'+frData[5].data[0][0].form_table_name}}"
-                                          method="post">
-                                        <div class="box-body ">
 
+                                    <div class="col-lg-12">
 
-                                            <div class="form-horizontal ">
-                                                <div class="panel panel-success">
+               <div class="input-group input-group-lg">
+                <input class="form-control"  id="acc"  type="text" placeholder="Enter Mobile Number/Booking ID">
+                    <span class="input-group-btn">
+                      <button type="button" ng-click="search($event)" class="btn btn-info btn-flat"><i class="fa fa-search"></i> Search</button>
+                    </span>
+              </div>
+                                        <div class="box-footer table-responsive" >
+                                            <table id="datatable1"
+                                                       class="table table-hover table-condensed    table-striped table-bordered ">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Booking ID</th>
+                                                        <th>Room Name</th>
+                                                        <th>Customer Name</th>
+                                                        <th>Customer Mobile</th>
+                                                        <th>Start Date</th>
+                                                        <th>End Date</th>
+                                                        <th>Booking Status</th>
+                                                    </tr>
 
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr ng-if="searchData.data[0]==null"><td colspan="7">No Booking Found</td></tr>
+                                                    <tr ng-repeat="r in searchData.data[0]"
+                                                        data-target="#roomEditFormModal" data-toggle="modal"
+                                                        ng-click="getBookindDetailBySummaryID(r.summary_id)">
+                                                        <td>{{r.summary_id}}</td>
+                                                        <td>{{r.room_name}}</td>
+                                                        <td>{{r.customer_name}}</td>
+                                                        <td>{{r.customer_mob}}</td>
+                                                        <td>{{r.book_start_date | date : "dd-MM-yyyy"}}</td>
+                                                        <td>{{r.book_end_date | date : "dd-MM-yyyy" }}</td>
+                                                        <td>{{r.description}}</td>
 
-                                                    <div class="panel-body">
-                                                        <!--  <center>
+                                                    </tr>
 
-                                                              <div class="col-lg-3 col-lg-offset-2">
-                                                                  <img src="{{pData.data[0].photo_url}}"
-                                                                       class="img-thumbnail img-responsive">
-                                                              </div>
-                                                          </center>-->
-                                                        <div class="form-group col-lg-4"
-                                                             ng-repeat="f in frData[5].data[1]">
-                                                            <label for="inputEmail3"
-                                                                   ng-if="f.isHidden==0 || f.caption_name!=''"
-                                                                   class="col-sm-2 control-label">{{f.caption_name}}</label>
-
-                                                            <div class="col-sm-10">
-
-
-                                                                <input ng-if="f.type_name!='textarea' && f.type_name!='select' && f.type_name!='button' && f.type_name!='submit' && f.type_name!='reset'"
-                                                                       ng-hide="f.isHidden"
-                                                                       type="{{f.type_name}}"
-                                                                       maxlength="{{f.field_max_length}}"
-                                                                       minlength="{{f.field_max_length}}"
-                                                                       ng-required="{{f.required_id}}"
-                                                                       ng-readonly="{{f.field_readonly}}"
-                                                                       ng-class="f.field_class"
-                                                                       class="form-control col-lg-2"
-                                                                       name="{{f.field_name}}"
-                                                                       id="{{f.field_id}}" ng-value="{{f.field_value}}"
-                                                                       placeholder="{{f.field_placeholder}}">
-                                                                <textarea ng-if="f.type_name=='textarea'"
-                                                                          ng-hide="f.isHidden"
-                                                                          maxlength="{{f.field_max_length}}"
-                                                                          minlength="{{f.field_max_length}}"
-                                                                          ng-required="{{f.required_id}}"
-                                                                          ng-readonly="{{f.field_readonly}}"
-                                                                          class="form-control col-lg-2"
-                                                                          name="{{f.field_name}}"
-                                                                          id="{{f.field_id}}"
-                                                                          ng-value="{{f.field_value}}"
-                                                                          placeholder="{{f.field_placeholder}}"></textarea>
-                                                                <select ng-if="f.type_name=='select'"
-                                                                        ng-hide="f.isHidden"
-                                                                        data-ng-init="getL_fieldByname(f.l_field_name)"
-                                                                        ng-value="{{f.field_value}}"
-                                                                        multiple
-
-
-                                                                        ng-required="{{f.required_id}}"
-                                                                        ng-readonly="{{f.field_readonly}}"
-                                                                        class="form-control col-lg-2"
-                                                                        name="{{f.field_name}}"
-                                                                        ng-blur="gs(f.field_other_attibute)"
-
-                                                                        id="{{f.field_id}}"
-                                                                >
-                                                                    <option ng-repeat="fo in froData.data[0]"
-                                                                            ng-value="{{fo.fid}}">{{fo.description}}
-                                                                    </option>
-
-                                                                </select>
-
-                                                                <div ng-if="f.type_name=='button' || f.type_name=='reset' || f.type_name=='submit'">
-
-                                                                    <button type="{{f.type_name}}"
-                                                                            maxlength="{{f.field_max_length}}"
-                                                                            minlength="{{f.field_max_length}}"
-                                                                            ng-required="{{f.required_id}}"
-                                                                            ng-readonly="{{f.field_readonly}}"
-                                                                            ng-class="f.field_class"
-                                                                            class="form-control col-lg-2"
-                                                                            name="{{f.field_name}}"
-                                                                            id="{{f.field_id}}"
-
-                                                                            ng-value="f.field_value">
-                                                                        {{f.field_value}}
-
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-
-
-                                                    <!-- /.box-header -->
-                                                    <!-- form start -->
-
-
-                                                    <!-- /.box-body -->
-
-                                                </div>
-
-                                            </div>
+                                                    </tbody>
+                                                </table>
                                         </div>
-                                    </form>
+
+
+                                    </div>
 
                                 </div>
 
@@ -803,9 +820,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="btn btn-sm btn-default" title="By default" ng-class="t.css_class"
+                    <div class="btn btn-sm btn-default tooltip1" ng-class="t.css_class"
 
                          style="padding: 30px; margin: 10px; " ng-repeat="t in tData.data[0]">
+                        <span  class="tooltiptext" id="tol{{t.room_id}}">
+                           </span>
                         <span ng-click="getRoomDetailByRoomID_temp(t.room_id)"
                               class="badge"><b>{{t.room_name}}</b></span>
 
@@ -938,6 +957,7 @@
                                                           ng-readonly="{{f.field_readonly}}"
                                                           class="form-control col-lg-2"
                                                           name="{{f.field_name}}"
+
                                                           id="{{f.field_id}}"
                                                           ng-value="{{f.field_value}}"
                                                           placeholder="{{f.field_placeholder}}"></textarea>

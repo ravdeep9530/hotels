@@ -53,8 +53,8 @@ app.get('/login', function(req, res) {
   });
 });
 
-app.get('/manage', function(req, res) {
-    res.render('adminlogin', {
+app.get('/report', function(req, res) {
+    res.render('report', {
         title: 'Admin Login'
     });
 });
@@ -63,7 +63,8 @@ app.get('/temp', function(req, res) {
         title: 'MUSIC'
     });
 });
-
+app.get('/getHotelsList',fetchController.getHotelsList);
+app.get('/getIsolateReport',fetchController.getIsolateReport);
 app.post('/api/authenticate',authenticateController.authenticate,function (req,res) {
 
 });//Authentication
@@ -103,14 +104,18 @@ router.get('/dashboard', function(req, res) {
 router.get('/getNextPage/:page_id',fetchController.getNextPage);
 router.get('/getTabs',fetchController.getTabs);
 router.get('/getForms',fetchController.getForms);
+router.get('/getTodayActivity',fetchController.getTodayActivity);
+router.get('/getStatupMethodLoader',fetchController.getStatupMethodLoader);
 router.get('/getFormsByID/:id',fetchController.getFormsByID);
+router.get('/getSearchBymob_bid/:bid',fetchController.getSearchBymob_bid);
 router.get('/getRoomDetailByRoomID_temp/:r_id',fetchController.getRoomDetailByRoomID_temp);
-router.get('/getLastTenBookingTransactions/',fetchController.getLastTenBookingTransactions);
+router.get('/getLastTenBookingTransactions/:h_id',fetchController.getLastTenBookingTransactions);
+router.get('/getToltipForRooms/',fetchController.getToltipForRooms);
 router.get('/getBookindDetailBySummaryID/:s_id',fetchController.getBookindDetailBySummaryID);
 router.get('/getL_fieldByname/:fname',fetchController.getL_fieldByname);
 
 router.get('/getRoomCategory/:h_id',fetchController.getRoomCategory);
-router.get('/getReports/:id',fetchController.getReports);
+router.get('/getReports/:id&:f_date&:t_date&:h_id',fetchController.getReports);
 router.get('/getRoomsByCategoryID/:c_id&:d_date',fetchController.getRoomsByCategoryID);
 router.get('/getRoomDetailByRoomID/:r_id',fetchController.getRoomDetailByRoomID);
 router.get('/api/trackSession',insertController.trackSession);
@@ -151,4 +156,4 @@ router.get('/logout', function(req, res) {
 app.use('/',router);
 
 
-app.listen(8080);
+app.listen(8081);
